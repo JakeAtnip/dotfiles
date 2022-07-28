@@ -9,15 +9,22 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
-Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/everforest'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'rust-lang/rust.vim'
 Plug 'romgrk/barbar.nvim'
+Plug 'lukas-reineke/indent-blankline.nvim'
 
 call plug#end()
-colorscheme gruvbox-material
+
+if has('termguicolors')
+    set termguicolors
+endif
+
+let g:everforest_background = 'soft'
+colorscheme everforest
 
 nnoremap <leader>t :Telescope find_files<Enter>
 nnoremap <leader>n :bprevious <Enter>
@@ -175,5 +182,21 @@ require'bufferline'.setup {
   -- where X is the buffer number. But only a static string is accepted here.
   no_name_title = nil,
 }
+
+vim.opt.list = true
+
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    -- `false` will disable the whole extension
+    enable = true,
+
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+
 EOF
 
