@@ -9,7 +9,12 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
+Plug 'justinmk/vim-sneak'
+
 Plug 'sainnhe/everforest'
+Plug 'sainnhe/gruvbox-material'
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -23,6 +28,12 @@ if has('termguicolors')
     set termguicolors
 endif
 
+"let g:tokyonight_style = "storm"
+"colorscheme tokyonight
+
+"let g:gruvbox_material_background = 'soft'
+"colorscheme gruvbox-material
+
 let g:everforest_background = 'soft'
 colorscheme everforest
 
@@ -32,7 +43,7 @@ nnoremap <leader>m :bnext<Enter>
 nnoremap <leader>c :bd<Enter>
 nnoremap <leader>w :w<Enter>
 nnoremap <leader>q :q<Enter>
-nnoremap <leader>qq :qall<Enter>
+nnoremap <leader>qq :q!<Enter>
 nnoremap <leader>1 :BufferGoto 1<Enter>
 nnoremap <leader>2 :BufferGoto 2<Enter>
 nnoremap <leader>3 :BufferGoto 3<Enter>
