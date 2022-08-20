@@ -196,6 +196,8 @@ require'bufferline'.setup {
 
 vim.opt.list = true
 
+--require 'nvim-treesitter.install'.compilers = { "cc" }
+
 require'nvim-treesitter.configs'.setup {
   highlight = {
     -- `false` will disable the whole extension
