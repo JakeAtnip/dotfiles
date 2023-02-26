@@ -21,20 +21,17 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 
 call plug#end()
 
-if has('termguicolors')
-    set termguicolors
-endif
-
 "let g:tokyonight_style = "storm"
 "colorscheme tokyonight
 
-"let g:gruvbox_material_background = 'soft'
-"colorscheme gruvbox-material
+let g:gruvbox_material_background = 'soft'
+colorscheme gruvbox-material
 
-let g:everforest_background = 'soft'
-colorscheme everforest
+"let g:everforest_background = 'soft'
+"colorscheme everforest
 
 nnoremap <leader>t :Telescope find_files<Enter>
+nnoremap <leader>g :Telescope live_grep<Enter>
 nnoremap <leader>n :bprevious <Enter>
 nnoremap <leader>m :bnext<Enter>
 nnoremap <leader>c :bd<Enter>
@@ -57,7 +54,7 @@ set shiftwidth=4
 set expandtab
 set smarttab
 set number
-set relativenumber
+"set relativenumber
 
 set completeopt=menu,menuone,noselect
 
@@ -196,17 +193,10 @@ vim.opt.list = true
 --require 'nvim-treesitter.install'.compilers = { "cc" }
 
 require'nvim-treesitter.configs'.setup {
+  auto_install = true,
   highlight = {
-    -- `false` will disable the whole extension
     enable = true,
-
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
   },
 }
 
 EOF
-
