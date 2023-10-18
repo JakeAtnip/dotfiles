@@ -11,7 +11,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-
 plugins = {
     'justinmk/vim-sneak',
     {
@@ -47,7 +46,9 @@ plugins = {
 }
 require("lazy").setup(plugins)
 
-vim.opt.nomore = true
+vim.api.nvim_set_hl(0, 'LineNr', { fg='white', bold=true })
+
+vim.opt.more = false 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 0
 vim.opt.shiftwidth = 4
@@ -55,10 +56,11 @@ vim.opt.expandtab = true
 vim.opt.smarttab = true
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.nu = true
 
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>f', builtin.find_files, {})
+vim.keymap.set('n', '<leader>t', builtin.find_files, {})
 vim.keymap.set('n', '<leader>g', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>tb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>b', builtin.buffers, {})
 
 vim.keymap.set('n', '<leader>p',":b#<Enter>", {})
