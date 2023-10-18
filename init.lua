@@ -17,8 +17,13 @@ plugins = {
         'sainnhe/gruvbox-material',
         config = function()
             vim.g["gruvbox_material_background"] = "soft"
-            vim.cmd("colorscheme gruvbox-material")
         end
+    },
+    {
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
+        opts = {},
     },
     {
         "nvim-treesitter/nvim-treesitter",
@@ -36,14 +41,6 @@ plugins = {
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
     {
-        "lukas-reineke/indent-blankline.nvim",
-        main = "ibl",
-        opts = {},
-        config = function()
-            require("ibl").setup()
-        end
-    },
-    {
         'romgrk/barbar.nvim',
         dependencies = {'nvim-tree/nvim-web-devicons'},
         config = function()
@@ -57,6 +54,8 @@ plugins = {
     },
 }
 require("lazy").setup(plugins)
+
+vim.cmd("colorscheme tokyonight-storm")
 
 vim.api.nvim_set_hl(0, 'LineNr', { fg='white', bold=true })
 
