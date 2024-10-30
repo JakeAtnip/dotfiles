@@ -48,19 +48,8 @@ plugins = {
         'nvim-telescope/telescope.nvim', tag = '0.1.4',
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
-    --{
-    --    'romgrk/barbar.nvim',
-    --    dependencies = {'nvim-tree/nvim-web-devicons'},
-    --    config = function()
-    --        require('bufferline').setup {
-    --            animation = false,
-    --            icons = {
-    --                buffer_index = true,
-    --            },
-    --        }
-    --    end,
-    --},
     {
+        -- lsp setup
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v3.x',
         dependencies = {
@@ -93,6 +82,7 @@ plugins = {
                 }
             })
 
+            -- auto complete key bindings
             local cmp = require'cmp'
             cmp.setup({
                 mapping = cmp.mapping.preset.insert({
@@ -104,13 +94,14 @@ plugins = {
                 }),
             })
 
+            -- lsp key bindings
             vim.keymap.set("n","gd",vim.lsp.buf.definition,{})
             vim.keymap.set("n","gr",vim.lsp.buf.references,{})
             vim.keymap.set("n","gi",vim.lsp.buf.implementation,{})
             vim.keymap.set("n","gh",vim.lsp.buf.hover,{})
             vim.keymap.set("n","gn",vim.lsp.buf.rename,{})
             
-            --turn off those annoying snippets
+            --turn off those annoying snippets for rust
             require'lspconfig'.rust_analyzer.setup{
               settings = {
                 ["rust-analyzer"] = {
@@ -135,9 +126,11 @@ plugins = {
 }
 require("lazy").setup(plugins)
 
+-- colors
 vim.cmd("colorscheme gruvbox-material")
 vim.cmd("set termguicolors")
 
+-- general editor configs
 vim.opt.more = false 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 0
@@ -148,6 +141,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.nu = true
 
+-- ############################### START TERMINAL FUNCTIONS ##############################
 --if buffer is not terminal buffer then \1, \2, ... does nothing
 --if buffer is terminal buffer then \1, \2, ... switches to the appropriate term
 --if \j is typed then the terminal is closed if its open, if its closed then
@@ -217,22 +211,28 @@ function open_close_terminal()
     end
 
 end
+-- ######################### END TERMINAL FUNCTIONS #####################################
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>t', builtin.find_files, {})
 vim.keymap.set('n', '<leader>g', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>f', builtin.buffers, {})
+
+-- helper keybindings
 vim.keymap.set('n', '<leader>c', ':bd<Enter>', {})
 vim.keymap.set('n', '<leader>x', ':bufdo bd<Enter>', {})
 vim.keymap.set('n', '<leader>w', ':w<Enter>', {})
 vim.keymap.set('n', '<leader>w', ':w<Enter>', {})
 
+-- escape terminal mode
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', {})
 
+-- open and close terminal
 vim.keymap.set('n','<leader>j',open_close_terminal,{})
 vim.keymap.set('i','<leader>j',open_close_terminal,{})
 vim.keymap.set('t','<leader>j',open_close_terminal,{})
 
+-- switch terminals only in terminal mode
 vim.keymap.set('t','<leader>1',function() switch_terminal(1) end,{})
 vim.keymap.set('n','<leader>1',function() switch_terminal(1) end,{})
 vim.keymap.set('t','<leader>2',function() switch_terminal(2) end,{})
@@ -251,21 +251,8 @@ vim.keymap.set('t','<leader>8',function() switch_terminal(8) end,{})
 vim.keymap.set('n','<leader>8',function() switch_terminal(8) end,{})
 vim.keymap.set('t','<leader>9',function() switch_terminal(9) end,{})
 vim.keymap.set('n','<leader>9',function() switch_terminal(9) end,{})
---vim.keymap.set('t','<leader>j2',':ToggleTerm 2 size=60<Enter>',{})
---vim.keymap.set('n','<leader>j2',':ToggleTerm 2 size=60<Enter>',{})
---vim.keymap.set('n','<leader>j1',':ToggleTerm 1 size=60<Enter>',{})
---vim.keymap.set('t','<leader>j',toggle_terminal,{})
---vim.keymap.set('t','<leader>j',toggle_terminal,{})
---vim.keymap.set("n","<leader>o", ":cdo e<Enter> <Esc><C-w>j :bd<Enter> :call CleanNoNameEmptyBuffers()<Enter>" ,{})
---vim.keymap.set('n', '<leader>1', ":BufferGoto 1<Enter>", {})
---vim.keymap.set('n', '<leader>2', ":BufferGoto 2<Enter>", {})
---vim.keymap.set('n', '<leader>3', ":BufferGoto 3<Enter>", {})
---vim.keymap.set('n', '<leader>4', ":BufferGoto 4<Enter>", {})
---vim.keymap.set('n', '<leader>5', ":BufferGoto 5<Enter>", {})
---vim.keymap.set('n', '<leader>6', ":BufferGoto 6<Enter>", {})
---vim.keymap.set('n', '<leader>7', ":BufferGoto 7<Enter>", {})
---vim.keymap.set('n', '<leader>8', ":BufferGoto 8<Enter>", {})
---vim.keymap.set('n', '<leader>9', ":BufferGoto 9<Enter>", {})
+
+-- helpers for switching between prior buffers
 vim.keymap.set('n', '<leader>p',":b#<Enter>", {})
 vim.keymap.set('n', '<leader>m',":bn<Enter>", {})
 vim.keymap.set('n', '<leader>n',":bp<Enter>", {})
