@@ -33,6 +33,122 @@ plugins = {
         end
     },
     {
+        'nvim-telescope/telescope.nvim', tag = '0.1.4',
+        dependencies = { 'nvim-lua/plenary.nvim' }
+    },
+    {
+        'neovim/nvim-lspconfig',
+        dependencies = {
+            'williamboman/mason.nvim',
+            'williamboman/mason-lspconfig.nvim',
+            'hrsh7th/cmp-nvim-lsp',
+            'hrsh7th/nvim-cmp',
+            'L3MON4D3/LuaSnip',
+            'saadparwaiz1/cmp_luasnip',
+        },
+        config = function()
+            -- reserve a space in the gutter
+            -- avoids an annoying layout shift in the screen
+            vim.opt.signcolumn = 'yes'
+
+            -- add cmp_nvim_lsp capabilities settings to lspconfig
+            -- this should be executed before you configure any language server
+            local lspconfig_defaults = require('lspconfig').util.default_config
+            lspconfig_defaults.capabilities = vim.tbl_deep_extend(
+                'force',
+                lspconfig_defaults.capabilities,
+                require('cmp_nvim_lsp').default_capabilities()
+            )
+
+            local ls = require('luasnip')
+            ls.add_snippets('markdown', {
+                ls.s('dropdown', {
+                    ls.t({"<!-- start question -->",
+                    "<details>",
+                    "<summary>","",""}),
+                    ls.i(1,'question'),
+                    ls.t({"","",
+                    "</summary>",
+                    "",""}),
+                    ls.i(2,'answer'),
+                    ls.t({"","",
+                    "</details>"})
+                }),
+                ls.s('layout', {
+                    ls.t({"---",
+                    "layout: '@layouts/Layout.astro'",
+                    "---",
+                    })
+                })
+            })
+
+            -- setup auto completion
+            local cmp = require('cmp')
+            cmp.setup({
+                snippet = {
+                    expand = function(args)
+                        require('luasnip').lsp_expand(args.body)
+                    end
+                },
+
+                sources = cmp.config.sources({
+                    {name = 'nvim_lsp'},
+                    {name = 'luasnip'}
+                }),
+
+                mapping = {
+                    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+                    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                    ['<C-Space>'] = cmp.mapping.complete(),
+                    ['<C-e>'] = cmp.mapping.abort(),
+                    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+                    ['<Tab>'] = cmp.mapping(function(fallback)
+                        if ls.expand_or_locally_jumpable() then
+                            ls.expand_or_jump()
+                        else
+                            fallback()
+                        end
+                    end, {'i','s'}),
+                    ['<S-Tab>'] = cmp.mapping(function(fallback)
+                        if ls.expand_or_locally_jumpable() then
+                            ls.jump(-1)
+                        else
+                            fallback()
+                        end
+                    end, {'i','s'}),
+                },
+            })
+
+            -- setup keymappings
+            vim.keymap.set("n","gd",vim.lsp.buf.definition,{})
+            vim.keymap.set("n","gr",vim.lsp.buf.references,{})
+            vim.keymap.set("n","gi",vim.lsp.buf.implementation,{})
+            vim.keymap.set("n","gh",vim.lsp.buf.hover,{})
+            vim.keymap.set("n","gn",vim.lsp.buf.rename,{})
+            vim.keymap.set("n", "ge", vim.diagnostic.open_float, {})
+
+            --setup language servers
+            require('mason').setup({})
+            require('mason-lspconfig').setup({
+                handlers = {
+                    function(server_name)
+                        require('lspconfig')[server_name].setup({})
+                    end,
+                }
+            })
+
+            -- turn off pesky zig ftplugin
+            vim.cmd("let g:zig_fmt_autosave = 0")
+
+            -- luasnip setup
+        end
+    },
+    {
+        "seblyng/roslyn.nvim",
+        ft = "cs",
+        opts = {}
+    },
+    {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
         config = function()
@@ -45,78 +161,6 @@ plugins = {
         end
     },
     {
-        'nvim-telescope/telescope.nvim', tag = '0.1.4',
-        dependencies = { 'nvim-lua/plenary.nvim' }
-    },
-    {
-        -- lsp setup
-        'VonHeikemen/lsp-zero.nvim',
-        branch = 'v3.x',
-        dependencies = {
-            'williamboman/mason.nvim',
-            'williamboman/mason-lspconfig.nvim',
-            'neovim/nvim-lspconfig',
-            'hrsh7th/cmp-nvim-lsp',
-            'hrsh7th/nvim-cmp',
-            'L3MON4D3/LuaSnip',
-        },
-        config = function()
-            local lsp = require("lsp-zero")
-            lsp.nvim_lua_ls()
-            
-            lsp.on_attach(function(client,bufnr)
-                local opts = {buffer= bufnr,remap = false}
-                lsp.default_keymaps({buffer = bufnr})
-            end)
-
-            lsp.setup()
-
-            vim.diagnostic.config({
-                virtual_text = true
-            })
-
-            require('mason').setup({}) 
-            require('mason-lspconfig').setup({
-                handlers = {
-                    lsp.default_setup,
-                }
-            })
-
-            -- auto complete key bindings
-            local cmp = require'cmp'
-            cmp.setup({
-                mapping = cmp.mapping.preset.insert({
-                  ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-                  ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                  ['<C-Space>'] = cmp.mapping.complete(),
-                  ['<C-e>'] = cmp.mapping.abort(),
-                  ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                }),
-            })
-
-            -- lsp key bindings
-            vim.keymap.set("n","gd",vim.lsp.buf.definition,{})
-            vim.keymap.set("n","gr",vim.lsp.buf.references,{})
-            vim.keymap.set("n","gi",vim.lsp.buf.implementation,{})
-            vim.keymap.set("n","gh",vim.lsp.buf.hover,{})
-            vim.keymap.set("n","gn",vim.lsp.buf.rename,{})
-            
-            --turn off those annoying snippets for rust
-            require'lspconfig'.rust_analyzer.setup{
-              settings = {
-                ["rust-analyzer"] = {
-                  completion = {
-                    postfix = {
-                      enable = false
-                    },
-                    addCallArgumentSnippets = false
-                  }
-                }
-              }
-            }
-        end,
-    },
-    {
         'mvllow/modes.nvim',
         tag = 'v0.2.0',
         config = function()
@@ -126,11 +170,9 @@ plugins = {
 }
 require("lazy").setup(plugins)
 
--- colors
 vim.cmd("colorscheme gruvbox-material")
 vim.cmd("set termguicolors")
 
--- general editor configs
 vim.opt.more = false 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 0
@@ -141,7 +183,6 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.nu = true
 
--- ############################### START TERMINAL FUNCTIONS ##############################
 --if buffer is not terminal buffer then \1, \2, ... does nothing
 --if buffer is terminal buffer then \1, \2, ... switches to the appropriate term
 --if \j is typed then the terminal is closed if its open, if its closed then
@@ -211,48 +252,32 @@ function open_close_terminal()
     end
 
 end
--- ######################### END TERMINAL FUNCTIONS #####################################
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>t', builtin.find_files, {})
 vim.keymap.set('n', '<leader>g', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>f', builtin.buffers, {})
-
--- helper keybindings
 vim.keymap.set('n', '<leader>c', ':bd<Enter>', {})
 vim.keymap.set('n', '<leader>x', ':bufdo bd<Enter>', {})
 vim.keymap.set('n', '<leader>w', ':w<Enter>', {})
 vim.keymap.set('n', '<leader>w', ':w<Enter>', {})
 
--- escape terminal mode
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', {})
 
--- open and close terminal
 vim.keymap.set('n','<leader>j',open_close_terminal,{})
 vim.keymap.set('i','<leader>j',open_close_terminal,{})
 vim.keymap.set('t','<leader>j',open_close_terminal,{})
 
--- switch terminals only in terminal mode
 vim.keymap.set('t','<leader>1',function() switch_terminal(1) end,{})
-vim.keymap.set('n','<leader>1',function() switch_terminal(1) end,{})
 vim.keymap.set('t','<leader>2',function() switch_terminal(2) end,{})
-vim.keymap.set('n','<leader>2',function() switch_terminal(2) end,{})
 vim.keymap.set('t','<leader>3',function() switch_terminal(3) end,{})
-vim.keymap.set('n','<leader>3',function() switch_terminal(3) end,{})
 vim.keymap.set('t','<leader>4',function() switch_terminal(4) end,{})
-vim.keymap.set('n','<leader>4',function() switch_terminal(4) end,{})
 vim.keymap.set('t','<leader>5',function() switch_terminal(5) end,{})
-vim.keymap.set('n','<leader>5',function() switch_terminal(5) end,{})
 vim.keymap.set('t','<leader>6',function() switch_terminal(6) end,{})
-vim.keymap.set('n','<leader>6',function() switch_terminal(6) end,{})
 vim.keymap.set('t','<leader>7',function() switch_terminal(7) end,{})
-vim.keymap.set('n','<leader>7',function() switch_terminal(7) end,{})
 vim.keymap.set('t','<leader>8',function() switch_terminal(8) end,{})
-vim.keymap.set('n','<leader>8',function() switch_terminal(8) end,{})
 vim.keymap.set('t','<leader>9',function() switch_terminal(9) end,{})
-vim.keymap.set('n','<leader>9',function() switch_terminal(9) end,{})
 
--- helpers for switching between prior buffers
 vim.keymap.set('n', '<leader>p',":b#<Enter>", {})
 vim.keymap.set('n', '<leader>m',":bn<Enter>", {})
 vim.keymap.set('n', '<leader>n',":bp<Enter>", {})
