@@ -27,6 +27,12 @@ plugins = {
         'justinmk/vim-sneak'
     },
     {
+        'lewis6991/gitsigns.nvim',
+    },
+    {
+        'sindrets/diffview.nvim'
+    },
+    {
         'sainnhe/gruvbox-material',
         config = function()
             vim.g["gruvbox_material_background"] = "soft"
@@ -142,7 +148,7 @@ plugins = {
             configs.setup({
                 auto_install=true,
                 highlight = {enable = true},
-                indent = {enable = true}
+                indent = {enable = false}
             })
             vim.treesitter.language.register('go', 'templ')
         end
@@ -153,6 +159,12 @@ plugins = {
         config = function()
             require('modes').setup()
         end
+    },
+    {
+      "supermaven-inc/supermaven-nvim",
+      config = function()
+        require("supermaven-nvim").setup({})
+      end,
     },
 }
 require("lazy").setup(plugins)
@@ -246,7 +258,6 @@ vim.keymap.set('n', '<leader>g', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>f', builtin.buffers, {})
 vim.keymap.set('n', '<leader>c', ':bd<Enter>', {})
 vim.keymap.set('n', '<leader>x', ':bufdo bd<Enter>', {})
-vim.keymap.set('n', '<leader>w', ':w<Enter>', {})
 vim.keymap.set('n', '<leader>w', ':w<Enter>', {})
 
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', {})
